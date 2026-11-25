@@ -46,6 +46,17 @@ async def get_employees():
         employees.append(employee_helper(employee))
     return employees
 
+@app.patch("/employees/{employee_id}")
+async def patch_employee(employee_id: str, employee: Employee):
+    result = await collection.update_one(
+        {"_id": ObjectId(employee_id)},
+        {"$set": employee.dict(exclude_unset=True)}
+    )
+    if result.modified_count == 1:
+        updated_employee = await collection.find_one({"_id": ObjectId(employee_id)})
+        return employee_helper(updated_employee)
+    return {"error": "Employee not found"}
+
 @app.put("/employees/{employee_id}")
 async def update_employee(employee_id: str, employee: Employee):
     result = await collection.update_one(
