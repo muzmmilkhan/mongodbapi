@@ -8,7 +8,11 @@ from bson import ObjectId
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(
+    title="Employee API",
+    description="API for managing employees",
+    version="1.0.0"
+)
 
 client = AsyncIOMotorClient(os.getenv("MONGODB_URI"))
 db = client[os.getenv("MONGODB_DB")]
