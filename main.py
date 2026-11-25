@@ -41,3 +41,14 @@ async def get_employees():
     async for employee in collection.find():
         employees.append(employee_helper(employee))
     return employees
+
+@app.put("/employees/{employee_id}")
+async def update_employee(employee_id: str, employee: Employee):
+    result = await collection.update_one(
+        {"_id": ObjectId(employee_id)},
+        {"$set": employee.dict()}
+    )
+    if result.modified_count == 1:
+        updated_employee = await collection.find_one({"_id": ObjectId(employee_id)})
+        return employee_helper(updated_employee)
+    return {"error": "Employee not found"}
